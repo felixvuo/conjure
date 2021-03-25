@@ -23,7 +23,7 @@ We need to specify the crops, the number of farms, the number of crops that can 
 
 Emily has decided that she wants each crop to be grown in 2 different farms, and that each pair of farmers will have 1 crop in common.
 
-Essence will take a .param file containing the values of the initial parameters. In the .param file we should define the parameters:
+Essence will take a ``.param`` file containing the values of the initial parameters. In the .param file we should define the parameters:
 
 .. code-block:: essence
 
@@ -40,7 +40,7 @@ The model will be in a .essence file. It should start by accessing the provided 
   given farms, crops_per_farm, farms_per_crop, overlap: int
   given crops new type enum
 
-Next, we need to define what we are looking for. The 'find' keyword indicates that the solver should find a value to for that variable. We want to find a set containing sets of crops. Each set of crops is a crop assignment for a farm.
+Next, we need to define what we are looking for. The ``find`` keyword indicates that the solver should find a value to for that variable. We want to find a set containing sets of crops. Each set of crops is a crop assignment for a farm.
 
 .. code-block:: essence
 
@@ -49,7 +49,7 @@ Next, we need to define what we are looking for. The 'find' keyword indicates th
 
   find crop_assignment: set of set of crops
 
-Once the parameters and ***targets?** of the model have been defined, we should define the constraints. ``such that`` indicates the start of the constraints.
+Once the parameters and ***targets** (decision variables) of the model have been defined, we should define the constraints. ``such that`` indicates the start of the constraints.
 
 .. code-block:: essence
 
@@ -66,7 +66,7 @@ Result::
 
 With no constraints it produces an empty set for crop assignment.
 
-The first, basic, constraints is the number of farms. The number of sets in the crop_assignment set should equal the numbers of farms. ``|crop_assignment|`` indicates the size of the crop_assignment set. By setting the size equal to the number of farms (after the such that keyword) the solver will only produce solutions where the size of the set is the same as the number of farms.  A comma on the end of line indicates that there are more constraints to follow.
+The first, basic, constraint is the number of farms. The number of sets in the crop_assignment set should equal the numbers of farms. ``|crop_assignment|`` indicates the size of the crop_assignment set. By setting the size equal to the number of farms (after the such that keyword) the solver will only produce solutions where the size of the set is the same as the number of farms.  A comma on the end of line indicates that there are more constraints to follow.
 
 .. code-block:: essence
 
@@ -88,7 +88,7 @@ Result::
 
 The model now produces four 'farms' but the number of crops assigned to each are not suitable.
 
-Next we want to apply the number of crops per farm constraint to every set in the crop assignment set. The ``forAll`` keyword will apply the constraint (``|farm| = crops_per_farm``) across every element in the crop_assignment set (represented by ``farm``). The ``.`` separates the constraint from the quantifier setup.
+Next we want to apply the number of crops per farm constraint to every set in the crop assignment set. The ``forAll`` keyword will apply the constraint ``|farm| = crops_per_farm`` across every element in the crop_assignment set (represented by ``farm``). The ``.`` separates the constraint from the quantifier setup.
 
 .. code-block:: essence
 
@@ -189,9 +189,7 @@ There is a nicer way to do the final constraint, instead of using a second ``for
   forAll crop : crops . (sum farm in crop_assignment . toInt(crop in farm)) = farms_per_crop,
   forAll {farm1, farm2} subsetEq crop_assignment . |farm1 intersect farm2| = overlap
 
-
-
-Providing information in the find statements rather than as constraints often leads to better perform. Essence provides :ref:`attributes<Domains>` which can be attached to find statements . One of them is size k, which tells Essence that a set is of size k. In our model the number of farms and the number of crops per farm are in effect the size of the crop_assignment set and the size of the sets within the crop_assignment set. Therefore we can move these definitions out of the list of constraints and into the find statement.
+Providing information in the find statements rather than as constraints often leads to better performance. Essence provides ``attributes <Domains>`` which can be attached to find statements. One of them is ``size k``, which tells Essence that a set is of size *k*. In our model the number of farms and the number of crops per farm are in effect the size of the crop_assignment set and the size of the sets within the crop_assignment set. Therefore we can move these definitions out of the list of constraints and into the find statement.
 
 .. code-block:: essence
 
